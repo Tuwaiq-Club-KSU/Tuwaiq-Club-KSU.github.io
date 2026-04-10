@@ -14,7 +14,7 @@
   <title>Tuwaiq Club — Coming Soon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Bungee&display=swap" rel="stylesheet" />
   <style>
     :root {
       --purple:       #4f29b7;
@@ -133,27 +133,32 @@
       letter-spacing: -0.01em;
     }
     .logo-text .club {
-      font-size: clamp(0.75rem, 1.8vw, 1.1rem);
-      font-weight: 500;
-      color: var(--cyan);
-      letter-spacing: 0.28em;
+      font-family: 'Bungee', sans-serif;
+      font-size: clamp(1rem, 2.2vw, 1.5rem);
+      font-weight: 400;
+      color: var(--off-white);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
     .pixel-plus {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 3px;
-      width: clamp(44px, 6vw, 64px);
-      height: clamp(44px, 6vw, 64px);
+      position: relative;
+      direction: ltr;
+      width: clamp(32px, 3.6vw, 46px);
+      height: clamp(48px, 5.4vw, 69px);
+      flex-shrink: 0;
       animation: pulsePlus 3.5s ease-in-out infinite;
     }
-    .pixel-plus span { border-radius: 3px; }
-    .pixel-plus span.off    { background: transparent; }
-    .pixel-plus span.cyan   { background: var(--cyan); }
-    .pixel-plus span.purple { background: var(--purple-light); }
-    .pixel-plus span.orange { background: var(--orange); }
+    .pixel-plus span {
+      position: absolute;
+      width: 50%;
+      aspect-ratio: 1;
+      border-radius: 22%;
+    }
+    .pixel-plus span.off    { display: none; }
+    .pixel-plus span.cyan   { top: 0;         left:  0; background: var(--cyan); }
+    .pixel-plus span.orange { top: 33.33%;    right: 0; background: var(--orange); }
+    .pixel-plus span.purple { top: 66.67%;    left:  0; background: var(--purple-light); }
 
     @keyframes pulsePlus {
       0%,100% { transform: scale(1); opacity: 1; }
@@ -295,6 +300,15 @@
       transition: filter 0.3s, opacity 0.3s;
     }
 
+    .sponsor-card img.logo-tuwaiq {
+      height: 52px;
+      filter: brightness(0) invert(1);
+      opacity: 0.8;
+    }
+    .sponsor-card:hover img.logo-tuwaiq {
+      opacity: 1;
+    }
+
     .sponsor-card img.logo-aws {
       filter: brightness(0) invert(1);
       opacity: 0.75;
@@ -406,12 +420,19 @@
     }
 
     .footer-pixel-plus {
-      display: grid;
-      grid-template-columns: repeat(3, 10px);
-      grid-template-rows: repeat(3, 10px);
-      gap: 2px;
+      position: relative;
+      direction: ltr;
+      width: 18px;
+      height: 27px;
+      flex-shrink: 0;
     }
-    .footer-pixel-plus span { border-radius: 2px; }
+    .footer-pixel-plus span {
+      position: absolute;
+      width: 50%;
+      aspect-ratio: 1;
+      border-radius: 22%;
+    }
+
 
     .footer-copy {
       font-size: 0.7rem;
@@ -460,9 +481,9 @@
           <span class="club">Club</span>
         </div>
         <div class="pixel-plus" aria-hidden="true">
-          <span class="off"></span><span class="cyan"></span><span class="off"></span>
-          <span class="purple"></span><span class="orange"></span><span class="cyan"></span>
-          <span class="off"></span><span class="purple"></span><span class="off"></span>
+          <span class="cyan"></span>
+          <span class="orange"></span>
+          <span class="purple"></span>
         </div>
       </div>
       <p class="logo-tagline">Supported by Tuwaiq Academy</p>
@@ -489,6 +510,15 @@
     <div class="sponsors-divider reveal"></div>
 
     <div class="sponsors-grid reveal">
+
+      <a class="sponsor-card" href="https://tuwaiq.edu.sa/" target="_blank" rel="noopener noreferrer">
+        <img
+          class="logo-tuwaiq"
+          src="../Useful Assets/Tuwaiq.png"
+          alt="Tuwaiq Academy"
+          loading="lazy"
+        />
+      </a>
 
       <a class="sponsor-card" href="https://ksu.edu.sa/" target="_blank" rel="noopener noreferrer">
         <img
@@ -527,22 +557,16 @@
     <div class="farewell-footer reveal">
       <div class="footer-logo-text">
         <div class="footer-pixel-plus" aria-hidden="true">
-          <span style="background:transparent"></span>
-          <span style="background:var(--cyan)"></span>
-          <span style="background:transparent"></span>
-          <span style="background:var(--purple-light)"></span>
-          <span style="background:var(--orange)"></span>
-          <span style="background:var(--cyan)"></span>
-          <span style="background:transparent"></span>
-          <span style="background:var(--purple-light)"></span>
-          <span style="background:transparent"></span>
+          <span style="top:0;left:0;background:var(--cyan)"></span>
+          <span style="top:33%;right:0;background:var(--orange)"></span>
+          <span style="bottom:0;left:0;background:var(--purple-light)"></span>
         </div>
         <div class="footer-logo-label">
           <span class="tuwaiq-sm">Tuwaiq</span>
           <span class="club-sm">Club</span>
         </div>
       </div>
-      <p class="footer-copy">© 2025 Tuwaiq Club · Supported by Tuwaiq Academy</p>
+      <p class="footer-copy">© 2026 Tuwaiq Club · Supported by Tuwaiq Academy</p>
     </div>
 
   </section>
