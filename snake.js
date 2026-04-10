@@ -221,31 +221,12 @@ window.TuwaiqSnake = (function () {
     ctx.font      = '400 ' + fs + 'px ' + FONT;
     ctx.textAlign = 'center';
     ctx.fillStyle = C.dim;
-    ctx.fillText(isMobile ? 'Swipe to begin' : 'Press an arrow key to begin', cx, cy);
+    ctx.fillText('Press an arrow key to begin', cx, cy);
 
     var gone = false;
 
     if (isMobile) {
-      var ts0 = null;
-      function swStart(e) { ts0 = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }
-      function swEnd(e) {
-        if (gone || !ts0) return;
-        var dx = e.changedTouches[0].clientX - ts0.x;
-        var dy = e.changedTouches[0].clientY - ts0.y;
-        ts0 = null;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 20) return;
-        gone = true;
-        canvas.removeEventListener('touchstart', swStart);
-        canvas.removeEventListener('touchend',   swEnd);
-        var d;
-        if (Math.abs(dx) > Math.abs(dy)) { d = dx > 0 ? {x:1,y:0} : {x:-1,y:0}; }
-        else                              { d = dy > 0 ? {x:0,y:1} : {x:0,y:-1}; }
-        dir = nextDir = d;
-        onDone();
-      }
-      canvas.addEventListener('touchstart', swStart, { passive: true });
-      canvas.addEventListener('touchend',   swEnd,   { passive: true });
+      onDone();
     } else {
       function kick(e) {
         var map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
