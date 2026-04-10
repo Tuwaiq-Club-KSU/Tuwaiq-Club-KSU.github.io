@@ -147,6 +147,7 @@
     .pixel-plus {
       position: relative;
       direction: ltr;
+      cursor: pointer;
       width: clamp(32px, 3.6vw, 46px);
       height: clamp(48px, 5.4vw, 69px);
       flex-shrink: 0;
@@ -572,6 +573,51 @@
     }, { threshold: 0.15 });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+  <script>
+    if (window.matchMedia('(pointer: fine)').matches) {
+      (function () {
+        var loaded = false;
+
+        function launch() {
+          if (loaded) { window.TuwaiqSnake.init(reattach); return; }
+          var s = document.createElement('script');
+          s.src = 'snake.js';
+          s.onload = function () { loaded = true; window.TuwaiqSnake.init(reattach); };
+          document.head.appendChild(s);
+        }
+
+        function onKey(e) {
+          if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) return;
+          if (window.scrollY > 80) return;
+          e.preventDefault();
+          detach();
+          launch();
+        }
+
+        function onClick() {
+          detach();
+          launch();
+        }
+
+        function attach() {
+          window.addEventListener('keydown', onKey);
+          var logo = document.querySelector('.pixel-plus');
+          if (logo) logo.addEventListener('click', onClick);
+        }
+
+        function detach() {
+          window.removeEventListener('keydown', onKey);
+          var logo = document.querySelector('.pixel-plus');
+          if (logo) logo.removeEventListener('click', onClick);
+        }
+
+        function reattach() { attach(); }
+
+        attach();
+      })();
+    }
   </script>
 
 </body>
