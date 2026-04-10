@@ -2,16 +2,16 @@
   ╔══════════════════════════════════════════════════════╗
   ║                                                      ║
   ║   ✦  Crafted by Yaser Allahim  ✦                    ║
-  ║      Tuwaiq Club — Coming Soon  |  EN               ║
+  ║      Tuwaiq Club — Coming Soon  |  AR               ║
   ║                                                      ║
   ╚══════════════════════════════════════════════════════╝
 -->
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tuwaiq Club — Coming Soon</title>
+  <title>نادي طويق — قريباً</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -40,7 +40,7 @@
     .lang-toggle {
       position: fixed;
       top: 1.5rem;
-      right: 1.5rem;
+      left: 1.5rem;
       z-index: 100;
       text-decoration: none;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -82,13 +82,13 @@
     .hero::before {
       width: 180px; height: 180px;
       background: var(--cyan);
-      top: -40px; left: -40px;
+      top: -40px; right: -40px;
       animation-delay: 0s;
     }
     .hero::after {
       width: 120px; height: 120px;
       background: var(--orange);
-      bottom: 60px; right: -30px;
+      bottom: 60px; left: -30px;
       animation-delay: -4s;
     }
 
@@ -98,9 +98,9 @@
       opacity: 0.12;
       animation: floatDrift 11s ease-in-out infinite;
     }
-    .deco-dot.d1 { width:80px; height:80px; background:var(--purple-light); top:15%; right:10%; animation-delay:-2s; }
-    .deco-dot.d2 { width:50px; height:50px; background:var(--cyan); bottom:20%; left:8%; animation-delay:-6s; }
-    .deco-dot.d3 { width:30px; height:30px; background:var(--orange); top:60%; right:20%; animation-delay:-3s; }
+    .deco-dot.d1 { width:80px; height:80px; background:var(--purple-light); top:15%; left:10%; animation-delay:-2s; }
+    .deco-dot.d2 { width:50px; height:50px; background:var(--cyan); bottom:20%; right:8%; animation-delay:-6s; }
+    .deco-dot.d3 { width:30px; height:30px; background:var(--orange); top:60%; left:20%; animation-delay:-3s; }
 
     @keyframes floatDrift {
       0%,100% { transform: translateY(0) rotate(0deg); }
@@ -121,10 +121,13 @@
       gap: 0.6rem;
     }
 
+    .logo-wordmark .pixel-plus { order: -1; }
+
     .logo-text {
       display: flex;
       flex-direction: column;
       line-height: 1;
+      text-align: right;
     }
     .logo-text .tuwaiq {
       font-size: clamp(2.4rem, 6vw, 4rem);
@@ -164,8 +167,7 @@
       font-size: clamp(0.7rem, 1.6vw, 0.85rem);
       font-weight: 400;
       color: rgba(237,237,237,0.55);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .coming-soon {
@@ -175,7 +177,7 @@
     }
 
     .coming-soon h1 {
-      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-size: clamp(3rem, 9vw, 6.5rem);
       font-weight: 700;
       color: var(--off-white);
       line-height: 1;
@@ -187,11 +189,11 @@
       content: '';
       display: block;
       height: 4px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple-light));
+      background: linear-gradient(270deg, var(--cyan), var(--purple-light));
       border-radius: 2px;
       margin-top: 0.3rem;
       animation: slideIn 1s 0.6s ease both;
-      transform-origin: left;
+      transform-origin: right;
     }
 
     @keyframes slideIn {
@@ -213,8 +215,7 @@
     }
     .scroll-hint span {
       font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      letter-spacing: 0.1em;
       color: var(--off-white);
     }
     .scroll-hint .arrow {
@@ -241,8 +242,7 @@
     .section-label {
       font-size: clamp(0.65rem, 1.5vw, 0.75rem);
       font-weight: 500;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
+      letter-spacing: 0.15em;
       color: var(--cyan);
     }
 
@@ -257,7 +257,7 @@
     .sponsors-divider {
       width: 48px;
       height: 3px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple-light));
+      background: linear-gradient(270deg, var(--cyan), var(--purple-light));
       border-radius: 2px;
     }
 
@@ -331,8 +331,8 @@
       width: 250px; height: 250px;
       background: rgba(87,227,216,0.08);
       border-radius: 24px;
-      bottom: -80px; left: -80px;
-      transform: rotate(20deg);
+      bottom: -80px; right: -80px;
+      transform: rotate(-20deg);
     }
     .farewell::after {
       content: '';
@@ -340,15 +340,15 @@
       width: 160px; height: 160px;
       background: rgba(244,166,100,0.08);
       border-radius: 16px;
-      top: -40px; right: -40px;
-      transform: rotate(-15deg);
+      top: -40px; left: -40px;
+      transform: rotate(15deg);
     }
 
     .farewell h2 {
       font-size: clamp(2.2rem, 6vw, 5rem);
       font-weight: 700;
       color: var(--off-white);
-      line-height: 1.1;
+      line-height: 1.2;
     }
 
     .farewell p {
@@ -356,19 +356,8 @@
       font-weight: 400;
       color: rgba(237,237,237,0.7);
       max-width: 520px;
+      line-height: 1.8;
     }
-
-    .farewell .pixel-plus-sm {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 3px;
-      width: 36px;
-      height: 36px;
-      opacity: 0.7;
-      margin-top: 1rem;
-    }
-    .farewell .pixel-plus-sm span { border-radius: 2px; }
 
     .farewell-footer {
       margin-top: 3.5rem;
@@ -395,7 +384,7 @@
       font-size: 0.55rem;
       font-weight: 500;
       color: var(--cyan);
-      letter-spacing: 0.25em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       line-height: 1;
     }
@@ -403,6 +392,7 @@
       display: flex;
       flex-direction: column;
       line-height: 1;
+      text-align: right;
     }
 
     .footer-pixel-plus {
@@ -410,13 +400,14 @@
       grid-template-columns: repeat(3, 10px);
       grid-template-rows: repeat(3, 10px);
       gap: 2px;
+      order: -1;
     }
     .footer-pixel-plus span { border-radius: 2px; }
 
     .footer-copy {
       font-size: 0.7rem;
       color: rgba(237,237,237,0.3);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       margin-top: 0.5rem;
     }
 
@@ -445,7 +436,7 @@
 </head>
 <body>
 
-  <a class="lang-toggle" href="ar.html">عربي</a>
+  <a class="lang-toggle" href="index.html">English</a>
 
   <section class="hero">
 
@@ -456,7 +447,7 @@
     <div class="logo-wrap">
       <div class="logo-wordmark">
         <div class="logo-text">
-          <span class="tuwaiq">Tuwaiq</span>
+          <span class="tuwaiq">طويق</span>
           <span class="club">Club</span>
         </div>
         <div class="pixel-plus" aria-hidden="true">
@@ -465,15 +456,15 @@
           <span class="off"></span><span class="purple"></span><span class="off"></span>
         </div>
       </div>
-      <p class="logo-tagline">Supported by Tuwaiq Academy</p>
+      <p class="logo-tagline">بدعم من أكاديمية طويق</p>
     </div>
 
     <div class="coming-soon">
-      <h1>Coming Soon</h1>
+      <h1>قريباً</h1>
     </div>
 
     <div class="scroll-hint">
-      <span>Scroll</span>
+      <span>مرر للأسفل</span>
       <div class="arrow"></div>
     </div>
 
@@ -482,8 +473,8 @@
   <section class="sponsors">
 
     <div class="reveal" style="text-align:center;">
-      <p class="section-label">Our Partners</p>
-      <h2 class="section-title">Sponsors</h2>
+      <p class="section-label">شركاؤنا</p>
+      <h2 class="section-title">رعاة</h2>
     </div>
 
     <div class="sponsors-divider reveal"></div>
@@ -494,7 +485,7 @@
         <img
           class="logo-ksu"
           src="../Useful Assets/KSU LOGO TRANS.png"
-          alt="King Saud University"
+          alt="جامعة الملك سعود"
           loading="lazy"
         />
       </a>
@@ -515,13 +506,13 @@
   <section class="farewell">
 
     <div class="reveal" style="position:relative;z-index:1;">
-      <p class="section-label">Stay Tuned</p>
+      <p class="section-label">ترقبوا الجديد</p>
     </div>
 
-    <h2 class="reveal" style="position:relative;z-index:1;">See You Soon</h2>
+    <h2 class="reveal" style="position:relative;z-index:1;">نراكم قريباً</h2>
 
     <p class="reveal" style="position:relative;z-index:1;">
-      Something exciting is on its way.<br/>We can't wait to share it with you.
+      شيء مثير في الطريق.<br/>لا يسعنا الانتظار لنشاركه معكم.
     </p>
 
     <div class="farewell-footer reveal">
@@ -538,11 +529,11 @@
           <span style="background:transparent"></span>
         </div>
         <div class="footer-logo-label">
-          <span class="tuwaiq-sm">Tuwaiq</span>
+          <span class="tuwaiq-sm">طويق</span>
           <span class="club-sm">Club</span>
         </div>
       </div>
-      <p class="footer-copy">© 2025 Tuwaiq Club · Supported by Tuwaiq Academy</p>
+      <p class="footer-copy">© ٢٠٢٥ نادي طويق · بدعم من أكاديمية طويق</p>
     </div>
 
   </section>
