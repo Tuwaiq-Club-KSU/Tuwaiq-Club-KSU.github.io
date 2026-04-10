@@ -1,15 +1,15 @@
 window.TuwaiqSnake = (function () {
 
   var C = {
-    bg:       '#4f29b7',
-    grid:     'rgba(255,255,255,0.025)',
-    head:     '#57e3d8',
-    body:     '#3ab8af',
-    foodA:    '#f4a664',
-    foodB:    '#a380ff',
-    text:     '#ededed',
-    dim:      'rgba(237,237,237,0.38)',
-    accent:   '#57e3d8',
+    bg:     '#4f29b7',
+    grid:   'rgba(255,255,255,0.025)',
+    head:   '#57e3d8',
+    body:   '#3ab8af',
+    foodA:  '#f4a664',
+    foodB:  '#a380ff',
+    text:   '#ededed',
+    dim:    'rgba(237,237,237,0.38)',
+    accent: '#57e3d8',
   };
 
   var FONT = "'IBM Plex Sans Arabic', sans-serif";
@@ -17,14 +17,13 @@ window.TuwaiqSnake = (function () {
   var canvas, ctx, overlay;
   var cw, cols, rows;
   var snake, dir, nextDir, food, foodIdx, score, speed, loopId, lastStep, gameState;
-  var onExitCb, keyHandler;
+  var onExitCb, keyHandler, swipeHandler;
+  var isMobile = false;
 
   /* ── Math ─────────────────────────── */
 
   function lerp(a, b, t) { return a + (b - a) * t; }
-
   function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-
   function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
   /* ── Grid ─────────────────────────── */
@@ -43,9 +42,9 @@ window.TuwaiqSnake = (function () {
     var r  = el.getBoundingClientRect();
     var sq = r.width * 0.5;
     return [
-      { cx: r.left  + sq * 0.5,          cy: r.top + sq * 0.5,                     size: sq, color: C.head  },
-      { cx: r.right - sq * 0.5,          cy: r.top + r.height * 0.3333 + sq * 0.5, size: sq, color: C.foodA },
-      { cx: r.left  + sq * 0.5,          cy: r.top + r.height * 0.6667 + sq * 0.5, size: sq, color: C.foodB },
+      { cx: r.left  + sq * 0.5,  cy: r.top + sq * 0.5,                     size: sq, color: C.head  },
+      { cx: r.right - sq * 0.5,  cy: r.top + r.height * 0.3333 + sq * 0.5, size: sq, color: C.foodA },
+      { cx: r.left  + sq * 0.5,  cy: r.top + r.height * 0.6667 + sq * 0.5, size: sq, color: C.foodB },
     ];
   }
 
@@ -112,17 +111,43 @@ window.TuwaiqSnake = (function () {
 
   function drawHUD() {
     var fs = Math.max(12, Math.min(15, canvas.width * 0.017));
-    ctx.font = '700 ' + fs + 'px ' + FONT;
-    ctx.fillStyle  = C.accent;
-    ctx.textAlign  = 'left';
+    ctx.font      = '700 ' + fs + 'px ' + FONT;
+    ctx.fillStyle = C.accent;
+    ctx.textAlign = 'left';
     ctx.fillText('Score  ' + score, 18, 18 + fs);
-    ctx.font = '400 ' + (fs - 1) + 'px ' + FONT;
-    ctx.fillStyle  = C.dim;
-    ctx.textAlign  = 'right';
-    ctx.fillText('ESC — exit', canvas.width - 18, 18 + fs);
+    if (isMobile) {
+      drawExitBtn();
+    } else {
+      ctx.font      = '400 ' + (fs - 1) + 'px ' + FONT;
+      ctx.fillStyle = C.dim;
+      ctx.textAlign = 'right';
+      ctx.fillText('ESC — exit', canvas.width - 18, 18 + fs);
+    }
   }
 
-  /* ── Overlay & canvas fade ────────── */
+  function exitBtnCenter() {
+    var r = Math.max(20, Math.min(26, canvas.width * 0.036));
+    return { x: canvas.width - 18 - r, y: 18 + r, r: r };
+  }
+
+  function drawExitBtn() {
+    var b = exitBtnCenter();
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth   = 1.2;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.stroke();
+    var arm = b.r * 0.38;
+    ctx.strokeStyle = C.text;
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+    ctx.beginPath();
+    ctx.moveTo(b.x - arm, b.y - arm); ctx.lineTo(b.x + arm, b.y + arm);
+    ctx.moveTo(b.x + arm, b.y - arm); ctx.lineTo(b.x - arm, b.y + arm);
+    ctx.stroke();
+  }
+
+  /* ── Overlay & canvas ─────────────── */
 
   function buildOverlay() {
     overlay = document.createElement('div');
@@ -166,88 +191,84 @@ window.TuwaiqSnake = (function () {
   function runAssembly(logoRects, onDone) {
     var sx = Math.floor(cols / 2);
     var sy = Math.floor(rows / 2);
-
     var targets = [
       { cx: sx       * cw + cw / 2, cy: sy * cw + cw / 2, size: cw },
       { cx: (sx - 1) * cw + cw / 2, cy: sy * cw + cw / 2, size: cw },
       { cx: (sx - 2) * cw + cw / 2, cy: sy * cw + cw / 2, size: cw },
     ];
-
-    var dur   = 680;
-    var start = null;
+    var dur = 680, start = null;
 
     function frame(ts) {
       if (!start) start = ts;
       var t  = Math.min((ts - start) / dur, 1);
       var et = easeOutCubic(t);
-
       drawBg();
-
       logoRects.forEach(function (sq, i) {
         var tgt = targets[i];
-        drawSquare(
-          lerp(sq.cx,   tgt.cx,   et),
-          lerp(sq.cy,   tgt.cy,   et),
-          lerp(sq.size, tgt.size, et),
-          sq.color
-        );
+        drawSquare(lerp(sq.cx, tgt.cx, et), lerp(sq.cy, tgt.cy, et), lerp(sq.size, tgt.size, et), sq.color);
       });
-
-      if (t < 1) {
-        requestAnimationFrame(frame);
-      } else {
-        showWaitHint(onDone);
-      }
+      if (t < 1) { requestAnimationFrame(frame); } else { showWaitHint(onDone); }
     }
-
     requestAnimationFrame(frame);
   }
 
   function showWaitHint(onDone) {
     drawBg();
     drawSnake();
-
     var cx = canvas.width / 2;
     var cy = canvas.height * 0.74;
     var fs = Math.max(11, Math.min(14, canvas.width * 0.016));
     ctx.font      = '400 ' + fs + 'px ' + FONT;
     ctx.textAlign = 'center';
     ctx.fillStyle = C.dim;
-    ctx.fillText('Press an arrow key to begin', cx, cy);
+    ctx.fillText(isMobile ? 'Swipe to begin' : 'Press an arrow key to begin', cx, cy);
 
     var gone = false;
-    function kick(e) {
-      var map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
-      var d = map[e.key];
-      if (!d) return;
-      if (gone) return;
-      gone = true;
-      e.preventDefault();
-      window.removeEventListener('keydown', kick);
-      dir = nextDir = d;
-      onDone();
+
+    if (isMobile) {
+      var ts0 = null;
+      function swStart(e) { ts0 = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }
+      function swEnd(e) {
+        if (gone || !ts0) return;
+        var dx = e.changedTouches[0].clientX - ts0.x;
+        var dy = e.changedTouches[0].clientY - ts0.y;
+        ts0 = null;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 20) return;
+        gone = true;
+        canvas.removeEventListener('touchstart', swStart);
+        canvas.removeEventListener('touchend',   swEnd);
+        var d;
+        if (Math.abs(dx) > Math.abs(dy)) { d = dx > 0 ? {x:1,y:0} : {x:-1,y:0}; }
+        else                              { d = dy > 0 ? {x:0,y:1} : {x:0,y:-1}; }
+        dir = nextDir = d;
+        onDone();
+      }
+      canvas.addEventListener('touchstart', swStart, { passive: true });
+      canvas.addEventListener('touchend',   swEnd,   { passive: true });
+    } else {
+      function kick(e) {
+        var map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
+        var d = map[e.key];
+        if (!d || gone) return;
+        gone = true;
+        e.preventDefault();
+        window.removeEventListener('keydown', kick);
+        dir = nextDir = d;
+        onDone();
+      }
+      window.addEventListener('keydown', kick);
     }
-    window.addEventListener('keydown', kick);
-    setTimeout(function () {
-      if (gone) return;
-      gone = true;
-      window.removeEventListener('keydown', kick);
-      onDone();
-    }, 3000);
   }
 
   /* ── Game ─────────────────────────── */
 
   function initGame() {
-    var sx = Math.floor(cols / 2);
-    var sy = Math.floor(rows / 2);
+    var sx = Math.floor(cols / 2), sy = Math.floor(rows / 2);
     snake   = [{ x: sx, y: sy }, { x: sx - 1, y: sy }, { x: sx - 2, y: sy }];
     dir     = { x: 1, y: 0 };
     nextDir = { x: 1, y: 0 };
-    score   = 0;
-    speed   = 130;
-    foodIdx = 0;
-    lastStep = 0;
+    score   = 0; speed = 130; foodIdx = 0; lastStep = 0;
     spawnFood();
   }
 
@@ -269,19 +290,14 @@ window.TuwaiqSnake = (function () {
       score++;
       if (score % 5 === 0) speed = Math.max(60, speed - 8);
       spawnFood();
-    } else {
-      snake.pop();
-    }
+    } else { snake.pop(); }
   }
 
   function loop(ts) {
     if (gameState !== 'running') return;
     loopId = requestAnimationFrame(loop);
     if (ts - lastStep > speed) { lastStep = ts; step(); }
-    drawBg();
-    drawFood();
-    drawSnake();
-    drawHUD();
+    drawBg(); drawFood(); drawSnake(); drawHUD();
   }
 
   /* ── Game over ────────────────────── */
@@ -290,14 +306,12 @@ window.TuwaiqSnake = (function () {
     drawBg(); drawSnake();
     ctx.fillStyle = 'rgba(14,5,46,0.78)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     var cx = canvas.width / 2, cy = canvas.height / 2;
     var bw = Math.min(370, canvas.width * 0.72), bh = 148;
     ctx.fillStyle = 'rgba(14,5,46,0.95)';
     rrect(cx - bw / 2, cy - bh / 2, bw, bh, 18); ctx.fill();
     ctx.strokeStyle = C.foodA; ctx.lineWidth = 1.5;
     rrect(cx - bw / 2, cy - bh / 2, bw, bh, 18); ctx.stroke();
-
     var ts = Math.max(20, Math.min(28, canvas.width * 0.034));
     ctx.textAlign = 'center';
     ctx.font = '700 ' + ts + 'px ' + FONT; ctx.fillStyle = C.text;
@@ -305,18 +319,26 @@ window.TuwaiqSnake = (function () {
     ctx.font = '500 ' + Math.round(ts * 0.62) + 'px ' + FONT; ctx.fillStyle = C.accent;
     ctx.fillText('Score  ' + score, cx, cy + 16);
     ctx.font = '400 ' + Math.round(ts * 0.5) + 'px ' + FONT; ctx.fillStyle = C.dim;
-    ctx.fillText('Press any key to exit', cx, cy + 46);
+    ctx.fillText(isMobile ? 'Tap to exit' : 'Press any key to exit', cx, cy + 46);
   }
 
   function endGame() {
     gameState = 'over';
     cancelAnimationFrame(loopId);
     window.removeEventListener('keydown', keyHandler);
+    removeSwipeHandler();
     drawGameOverScreen();
-    window.addEventListener('keydown', function once() {
-      window.removeEventListener('keydown', once);
-      doExit();
-    });
+    if (isMobile) {
+      canvas.addEventListener('touchend', function once() {
+        canvas.removeEventListener('touchend', once);
+        doExit();
+      });
+    } else {
+      window.addEventListener('keydown', function once() {
+        window.removeEventListener('keydown', once);
+        doExit();
+      });
+    }
   }
 
   /* ── Exit ─────────────────────────── */
@@ -325,6 +347,7 @@ window.TuwaiqSnake = (function () {
     gameState = 'exiting';
     cancelAnimationFrame(loopId);
     window.removeEventListener('keydown', keyHandler);
+    removeSwipeHandler();
 
     canvas.style.transition = 'opacity 0.45s ease';
     canvas.style.opacity    = '0';
@@ -333,7 +356,6 @@ window.TuwaiqSnake = (function () {
       overlay.style.transition = 'opacity 0.5s ease';
       overlay.style.opacity    = '0';
       restoreLogo();
-
       setTimeout(function () {
         if (canvas  && canvas.parentNode)  canvas.parentNode.removeChild(canvas);
         if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
@@ -343,7 +365,7 @@ window.TuwaiqSnake = (function () {
     }, 380);
   }
 
-  /* ── Keyboard ─────────────────────── */
+  /* ── Input handlers ───────────────── */
 
   function buildKeyHandler() {
     var map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
@@ -359,10 +381,52 @@ window.TuwaiqSnake = (function () {
     window.addEventListener('keydown', keyHandler);
   }
 
+  function buildSwipeHandler() {
+    var t0 = null;
+    function onStart(e) {
+      e.preventDefault();
+      t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    function onEnd(e) {
+      if (!t0) return;
+      e.preventDefault();
+      var dx   = e.changedTouches[0].clientX - t0.x;
+      var dy   = e.changedTouches[0].clientY - t0.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      t0 = null;
+
+      if (dist < 20) {
+        var tc = e.changedTouches[0];
+        var b  = exitBtnCenter();
+        var dd = Math.sqrt((tc.clientX - b.x) * (tc.clientX - b.x) + (tc.clientY - b.y) * (tc.clientY - b.y));
+        if (dd <= b.r + 10) { doExit(); }
+        return;
+      }
+
+      if (gameState !== 'running') return;
+      var d;
+      if (Math.abs(dx) > Math.abs(dy)) { d = dx > 0 ? {x:1,y:0} : {x:-1,y:0}; }
+      else                              { d = dy > 0 ? {x:0,y:1} : {x:0,y:-1}; }
+      if (d.x === -dir.x && d.y === -dir.y) return;
+      nextDir = d;
+    }
+    canvas.addEventListener('touchstart', onStart, { passive: false });
+    canvas.addEventListener('touchend',   onEnd,   { passive: false });
+    swipeHandler = { start: onStart, end: onEnd };
+  }
+
+  function removeSwipeHandler() {
+    if (!swipeHandler || !canvas) return;
+    canvas.removeEventListener('touchstart', swipeHandler.start);
+    canvas.removeEventListener('touchend',   swipeHandler.end);
+    swipeHandler = null;
+  }
+
   /* ── Public ───────────────────────── */
 
   function init(onExit) {
     onExitCb = onExit || null;
+    isMobile = !window.matchMedia('(pointer: fine)').matches;
 
     var logoRects = getLogoRects();
 
@@ -370,15 +434,15 @@ window.TuwaiqSnake = (function () {
     buildCanvas();
     computeGrid();
     initGame();
-    buildKeyHandler();
+
+    if (isMobile) { buildSwipeHandler(); }
+    else          { buildKeyHandler();   }
 
     hideLogo();
 
     drawBg();
     if (logoRects) {
-      logoRects.forEach(function (sq) {
-        drawSquare(sq.cx, sq.cy, sq.size, sq.color);
-      });
+      logoRects.forEach(function (sq) { drawSquare(sq.cx, sq.cy, sq.size, sq.color); });
     }
 
     fadeIn();

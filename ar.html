@@ -576,48 +576,70 @@
   </script>
 
   <script>
-    if (window.matchMedia('(pointer: fine)').matches) {
-      (function () {
-        var loaded = false;
+    (function () {
+      var loaded = false;
+      var tStart = null;
 
-        function launch() {
-          if (loaded) { window.TuwaiqSnake.init(reattach); return; }
-          var s = document.createElement('script');
-          s.src = 'snake.js';
-          s.onload = function () { loaded = true; window.TuwaiqSnake.init(reattach); };
-          document.head.appendChild(s);
-        }
+      function launch() {
+        if (loaded) { window.TuwaiqSnake.init(reattach); return; }
+        var s = document.createElement('script');
+        s.src = 'snake.js';
+        s.onload = function () { loaded = true; window.TuwaiqSnake.init(reattach); };
+        document.head.appendChild(s);
+      }
 
-        function onKey(e) {
-          if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) return;
-          if (window.scrollY > 80) return;
-          e.preventDefault();
-          detach();
-          launch();
-        }
+      function onKey(e) {
+        if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) return;
+        if (window.scrollY > 80) return;
+        e.preventDefault();
+        detach(); launch();
+      }
 
-        function onClick() {
-          detach();
-          launch();
-        }
+      function onClick() { detach(); launch(); }
 
-        function attach() {
-          window.addEventListener('keydown', onKey);
+      function onTouchStart(e) {
+        if (window.scrollY > 80) return;
+        tStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+
+      function onTouchEnd(e) {
+        if (!tStart) return;
+        var dx = e.changedTouches[0].clientX - tStart.x;
+        var dy = e.changedTouches[0].clientY - tStart.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        tStart = null;
+        if (dist < 20) {
           var logo = document.querySelector('.pixel-plus');
-          if (logo) logo.addEventListener('click', onClick);
+          if (!logo) return;
+          var r = logo.getBoundingClientRect();
+          var tc = e.changedTouches[0];
+          if (tc.clientX >= r.left - 12 && tc.clientX <= r.right + 12 &&
+              tc.clientY >= r.top  - 12 && tc.clientY <= r.bottom + 12) { detach(); launch(); }
+        } else {
+          detach(); launch();
         }
+      }
 
-        function detach() {
-          window.removeEventListener('keydown', onKey);
-          var logo = document.querySelector('.pixel-plus');
-          if (logo) logo.removeEventListener('click', onClick);
-        }
+      function attach() {
+        window.addEventListener('keydown', onKey);
+        document.addEventListener('touchstart', onTouchStart, { passive: true });
+        document.addEventListener('touchend',   onTouchEnd,   { passive: true });
+        var logo = document.querySelector('.pixel-plus');
+        if (logo) logo.addEventListener('click', onClick);
+      }
 
-        function reattach() { attach(); }
+      function detach() {
+        window.removeEventListener('keydown', onKey);
+        document.removeEventListener('touchstart', onTouchStart);
+        document.removeEventListener('touchend',   onTouchEnd);
+        var logo = document.querySelector('.pixel-plus');
+        if (logo) logo.removeEventListener('click', onClick);
+      }
 
-        attach();
-      })();
-    }
+      function reattach() { attach(); }
+
+      attach();
+    })();
   </script>
 
 </body>
