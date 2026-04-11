@@ -545,6 +545,8 @@
 
   <section class="farewell">
 
+    <div id="clicker-trigger" style="position:absolute;bottom:-80px;left:-80px;width:250px;height:250px;border-radius:24px;z-index:2;cursor:pointer;" title=""></div>
+
     <div class="reveal" style="position:relative;z-index:1;">
       <p class="section-label">Stay Tuned</p>
     </div>
@@ -621,6 +623,31 @@
       function reattach() { attach(); }
 
       attach();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var loaded = false;
+      var clicks = 0, clickTimer;
+
+      function launch() {
+        if (loaded) { window.TuwaiqClicker.init(null); return; }
+        var s = document.createElement('script');
+        s.src = 'clicker.js';
+        s.onload = function () { loaded = true; window.TuwaiqClicker.init(null); };
+        document.head.appendChild(s);
+      }
+
+      var el = document.getElementById('clicker-trigger');
+      if (el) {
+        el.addEventListener('click', function () {
+          clicks++;
+          clearTimeout(clickTimer);
+          clickTimer = setTimeout(function () { clicks = 0; }, 2000);
+          if (clicks >= 5) { clicks = 0; clearTimeout(clickTimer); launch(); }
+        });
+      }
     })();
   </script>
 
