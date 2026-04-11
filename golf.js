@@ -214,7 +214,7 @@ window.TuwaiqGolf = (function () {
 
   function initSounds() {
     if (typeof Howl === 'undefined') return;
-    var base = '../Useful Assets/memes/Sounds/';
+    var base = './Useful%20Assets/memes/sounds/';
     sndScream = new Howl({ src: [base + 'Scream.mp3'], volume: 0.20, sprite: { play: [1000, 5000] } });
     sndStatic = new Howl({ src: [base + 'static.mp3'], volume: 0.08 });
     sndTada   = new Howl({ src: [base + 'tada.mp3'],  volume: 0.65 });
