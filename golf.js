@@ -444,7 +444,7 @@ window.TuwaiqGolf = (function () {
     leftPanel = document.createElement('div');
     leftPanel.id = 'tqg-left';
     leftPanel.innerHTML = [
-      '<div id="tqg-title"><img id="tqg-logo" src="../ Useful Assets/memes/logo.png" alt="Uncanny Cube Golf"></div>',
+      '<div id="tqg-title"><img id="tqg-logo" src="../Useful Assets/memes/logo.png" alt="Uncanny Cube Golf"></div>',
       '<div id="tqg-stats">',
       '  Strokes: <span id="tqg-s-strokes">0</span><br>',
       '  Time: <span id="tqg-s-time">00:00</span><br>',
