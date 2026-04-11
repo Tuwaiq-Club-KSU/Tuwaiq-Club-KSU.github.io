@@ -391,9 +391,9 @@ window.TuwaiqGolf = (function () {
     var s = document.createElement('style');
     s.id  = 'tqg-style';
     s.textContent = [
-      '#tqg-overlay{position:fixed;inset:0;z-index:9999;display:flex;background:#0d0520;font-family:monospace;}',
+      '#tqg-overlay{position:fixed;z-index:9999;display:flex;background:#0d0520;font-family:monospace;transform-origin:center center;overflow:hidden;}',
       '#tqg-left{width:260px;flex-shrink:0;background:#1a0d3d;display:flex;flex-direction:column;padding:12px;box-sizing:border-box;overflow:hidden;}',
-      '#tqg-canvas{flex:1;display:block;cursor:crosshair;position:relative;overflow:hidden;}',
+      '#tqg-canvas{display:block;cursor:crosshair;position:relative;overflow:hidden;flex-shrink:0;}',
       '#tqg-portrait{display:none;position:fixed;inset:0;z-index:99999;background:#0d0520;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#e0b0ff;font-family:monospace;font-size:18px;text-align:center;pointer-events:none;}',
       '@media(orientation:portrait){#tqg-portrait{display:flex;}}',
       '#tqg-title{margin-bottom:10px;text-align:center;}',
@@ -480,9 +480,18 @@ window.TuwaiqGolf = (function () {
     showReaction('idle');
   }
 
+  var GAME_W = 900, GAME_H = 600;   // fixed logical resolution
+
   function resizeCanvas() {
-    canvas.width  = window.innerWidth  - 260;
-    canvas.height = window.innerHeight;
+    canvas.width  = GAME_W;
+    canvas.height = GAME_H;
+    var TOTAL_W = GAME_W + 260;     // 260 = left panel width
+    var scale   = Math.min(window.innerWidth / TOTAL_W, window.innerHeight / GAME_H);
+    overlay.style.width     = TOTAL_W + 'px';
+    overlay.style.height    = GAME_H  + 'px';
+    overlay.style.left      = '50%';
+    overlay.style.top       = '50%';
+    overlay.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
   }
 
   function updateStats() {
@@ -513,7 +522,10 @@ window.TuwaiqGolf = (function () {
 
   function canvasCoords(e) {
     var r = canvas.getBoundingClientRect();
-    return { x: (e.clientX - r.left), y: (e.clientY - r.top) };
+    return {
+      x: (e.clientX - r.left) * (canvas.width  / r.width),
+      y: (e.clientY - r.top)  * (canvas.height / r.height)
+    };
   }
 
   function onMouseMove(e) {
