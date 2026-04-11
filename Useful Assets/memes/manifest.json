@@ -1,0 +1,25 @@
+{
+  "events": {
+    "idle": ["idle.webp"],
+    "holeinone": ["holeinone.png"],
+    "cube": ["void.webp"],
+    "void": ["void.webp"],
+    "trigger": ["trigger.webp"],
+    "scared": ["scared.webp"],
+    "goal": [],
+    "car": []
+  },
+  "random": [
+    "random/WhatsApp Image 2026-04-11 at 2.12.21 PM.jpeg",
+    "random/WhatsApp Image 2026-04-11 at 2.12.21 PM (1).jpeg",
+    "random/WhatsApp Image 2026-04-11 at 2.12.21 PM (2).jpeg",
+    "random/WhatsApp Image 2026-04-11 at 2.12.21 PM (3).jpeg",
+    "random/WhatsApp Image 2026-04-11 at 2.12.22 PM.jpeg",
+    "random/cover.thumb256.webp",
+    "random/cover.thumb256 (1).webp",
+    "random/idk-meme-random-memes.gif",
+    "random/images.jpg",
+    "random/images (1).jpg",
+    "random/images.webp"
+  ]
+}
