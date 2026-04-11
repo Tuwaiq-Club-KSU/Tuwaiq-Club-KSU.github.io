@@ -110,6 +110,7 @@ var CUBE_LINES = {
     'just a little square in a big world',
     'square² = power',
     'all your clicks are belong to us',
+    // ── NEW IDLE LINES (30+ fresh ones) ──
     'rotating in 4D... or maybe just bored',
     'counting prime numbers while I wait',
     'if I had legs I\'d pace. instead I just hum',
@@ -152,6 +153,7 @@ var CUBE_LINES = {
     'again',
     'keep going!',
     'that tickles',
+    // ── NEW CLICK LINES (12 fresh ones) ──
     'yes yes YES',
     'right there!',
     'i live for this',
@@ -173,6 +175,7 @@ var CUBE_LINES = {
     'i felt that.',
     'bonus acquired.',
     '✨',
+    // ── NEW GOLDEN LINES (12 fresh ones) ──
     'GOLDEN HOUR ACTIVATED',
     'i\'m glowing up fr',
     'jackpot, baby!',
@@ -194,6 +197,7 @@ var CUBE_LINES = {
     'maximum overdrive activated',
     '24 HOURS NO SLEEP',
     'we are speed',
+    // ── NEW HACKATHON LINES (12 fresh ones) ──
     'COFFEE IV DRIP ENABLED',
     'we don\'t sleep we ship',
     'HACK THE PLANET (with squares)',
@@ -216,6 +220,7 @@ var CUBE_LINES = {
     'what did i miss?',
     'who am i? where am i?',
     'memory wiped. vibes retained.',
+    // ── NEW RECOMPILE LINES (10 fresh ones) ──
     'fresh out the factory',
     'rebooted, recharged, reborn',
     'version 2.0 but cuter',
@@ -236,6 +241,7 @@ var CUBE_LINES = {
     'exponential growth is beautiful.',
     'achievement unlocked. nice.',
     'i knew we could do it.',
+    // ── NEW MILESTONE LINES (12 fresh ones) ──
     'we just broke the simulation',
     'this is not a drill. we\'re huge',
     'the numbers... they\'re beautiful',
@@ -282,7 +288,9 @@ function getBuildingCPS(b, s) {
     if (u.type === 'building' && u.target === b.id) mult *= u.mult;
     if (u.type === 'global') mult *= u.mult;
   });
-  if (hasArch('solid')) mult *= Math.pow(1.15, s.recompiles || 0);
+  var recompBonus = Math.pow(1.25, s.recompiles || 0);
+  if (hasArch('solid')) recompBonus *= Math.pow(1.15, s.recompiles || 0);
+  mult *= recompBonus;
   mult *= (1 + Object.keys(s.achievements || {}).length * 0.01);
   return b.cps * owned * mult;
 }
@@ -441,6 +449,13 @@ function injectStyle() {
     '.tqu-n{font-size:12px;font-weight:700;margin-bottom:2px;}',
     '.tqu-c{font-size:11px;color:#57e3d8;}',
     '.tqu-d{font-size:10px;color:rgba(237,237,237,.5);margin-top:2px;}',
+    '.tqu-sechd{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,237,237,.25);padding:8px 0 4px 0;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:4px;}',
+    '.tqu-sechd-locked{color:rgba(163,128,255,.3);}',
+    '.tqu-sechd-owned{color:rgba(87,227,216,.25);}',
+    '.tqu-empty{color:rgba(237,237,237,.28);font-size:11px;padding:8px 0;}',
+    '.tqu-locked{opacity:.45;cursor:default;border-style:dashed;}',
+    '.tqu-hint{font-size:10px;color:rgba(163,128,255,.6);margin-top:3px;}',
+    '.tqu-owned{opacity:.4;cursor:default;background:rgba(87,227,216,.06);border-color:rgba(87,227,216,.15);}',
     // Building rows
     '.tqb{background:rgba(79,41,183,.15);border:1px solid rgba(87,227,216,.1);border-radius:10px;padding:8px 10px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:8px;}',
     '.tqb:hover{background:rgba(79,41,183,.35);border-color:rgba(87,227,216,.35);}',
@@ -488,6 +503,21 @@ function injectStyle() {
     // Exit
     '#tqx{position:fixed;top:14px;right:14px;z-index:10001;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#ededed;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'+FONT+';}',
     '#tqx:hover{background:rgba(255,255,255,.2);}',
+    '#tq-achbtn{position:fixed;top:14px;right:58px;z-index:10001;width:36px;height:36px;border-radius:50%;background:rgba(244,166,100,.15);border:1px solid rgba(244,166,100,.35);color:#f4a664;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'+FONT+';}',
+    '#tq-achbtn:hover{background:rgba(244,166,100,.3);}',
+    '#tq-achmodal{position:fixed;inset:0;z-index:10004;background:rgba(14,5,46,.92);display:flex;align-items:center;justify-content:center;}',
+    '#tq-achmodal.h{display:none;}',
+    '#tq-achbox{background:rgba(14,5,46,.99);border:1.5px solid rgba(244,166,100,.5);border-radius:18px;padding:24px 28px;max-width:500px;width:92%;max-height:80vh;overflow-y:auto;scrollbar-width:thin;}',
+    '#tq-achbox h2{color:#f4a664;font-size:18px;margin-bottom:16px;font-family:'+FONT+';}',
+    '.tqam-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}',
+    '.tqam-row.earned .tqam-ic{color:#f4a664;}',
+    '.tqam-row.locked .tqam-ic{color:rgba(237,237,237,.2);}',
+    '.tqam-ic{font-size:18px;flex-shrink:0;line-height:1.4;}',
+    '.tqam-name{font-size:12px;font-weight:700;}',
+    '.tqam-row.earned .tqam-name{color:#f4a664;}',
+    '.tqam-row.locked .tqam-name{color:rgba(237,237,237,.3);}',
+    '.tqam-desc{font-size:10px;color:rgba(237,237,237,.4);margin-top:2px;}',
+    '#tq-achclose{display:block;width:100%;margin-top:16px;padding:10px;background:transparent;border:1px solid rgba(237,237,237,.25);border-radius:10px;color:#ededed;font-family:'+FONT+';font-size:13px;cursor:pointer;}',
     // Notifications
     '#tq-ntf{position:fixed;top:58px;right:14px;z-index:10003;width:240px;pointer-events:none;}',
     '.tq-n{background:rgba(14,5,46,.95);border:1px solid rgba(244,166,100,.5);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:11px;animation:tqnin .3s ease,tqnout .5s ease 2.5s forwards;}',
@@ -539,11 +569,9 @@ function buildUI() {
   var left = mk('div', 'tqp'); left.id = 'tql';
   var uHd  = mk('div', 'tqhd', 'Upgrades');
   var uList = mk('div'); uList.id = 'tq-ulist';
-  var aHd  = mk('div', 'tqhd tqsec', 'Achievements');
-  achListEl = mk('div'); achListEl.id = 'tq-alist';
   var arHd = mk('div', 'tqhd tqsec', 'Architecture'); arHd.id = 'tq-archhd';
   archListEl = mk('div'); archListEl.id = 'tq-archlist';
-  [uHd,uList,aHd,achListEl,arHd,archListEl].forEach(function(e){left.appendChild(e);});
+  [uHd,uList,arHd,archListEl].forEach(function(e){left.appendChild(e);});
 
   /* Center */
   var mid = mk('div'); mid.id = 'tqmid';
@@ -590,6 +618,7 @@ function buildUI() {
   [bHd,bList,rcwrap].forEach(function(e){right.appendChild(e);});
 
   var exitBtn = mk('button','','✕'); exitBtn.id = 'tqx';
+  var achBtn = mk('button','','🏆'); achBtn.id = 'tq-achbtn';
   var ntf = mk('div'); ntf.id = 'tq-ntf';
 
   /* Recompile confirm */
@@ -611,6 +640,8 @@ function buildUI() {
   });
 
   [left,mid,right,exitBtn,ntf,rcconf,tabs].forEach(function(e){overlay.appendChild(e);});
+  overlay.appendChild(achBtn);
+  achBtn.addEventListener('click', showAchModal);
   document.body.appendChild(overlay);
 
   /* Build shop rows once — permanent listeners */
@@ -690,69 +721,116 @@ function updateShopData() {
   });
 }
 
-/* ── Upgrade list — incremental DOM (no full rebuild) ── */
+/* ── Upgrade list — 3-section display ────────────── */
 function syncUpgradeList() {
-  var vis = UPGRADES.filter(function(u){ return !hasUpgrade(u.id) && u.req && u.req(state); });
-  var key = vis.map(function(u){ return u.id; }).join('|');
+  var available = UPGRADES.filter(function(u){ return !hasUpgrade(u.id) && u.req && u.req(state); });
+  var locked    = UPGRADES.filter(function(u){ return !hasUpgrade(u.id) && u.req && !u.req(state); });
+  var owned     = UPGRADES.filter(function(u){ return hasUpgrade(u.id); });
 
-  if (key === upgradeVisKey) {
-    /* Fast path — just refresh classes/costs, no structural DOM changes */
-    vis.forEach(function(u) {
-      var cost = getUpgradeCost(u), can = state.squares >= cost;
-      ['tq-ulist','tq-mulist'].forEach(function(lid) {
-        var c = document.querySelector('#'+lid+' [data-uid="'+u.id+'"]');
-        if (!c) return;
-        c.classList.toggle('aff', can);
-        c.classList.toggle('dim', !can);
-        c.querySelector('.tqu-c').textContent = fmt(cost)+' sq';
-      });
-    });
-    return;
-  }
+  var key = available.map(function(u){ return u.id; }).join('|')
+          + '||' + owned.length;
 
-  var oldIds = upgradeVisKey ? upgradeVisKey.split('|') : [];
-  var newIds = vis.map(function(u){ return u.id; });
+  var needRebuild = (key !== upgradeVisKey);
   upgradeVisKey = key;
 
   ['tq-ulist','tq-mulist'].forEach(function(lid) {
     var list = document.getElementById(lid); if (!list) return;
 
-    /* Remove items that were purchased (no longer visible) */
-    oldIds.forEach(function(id) {
-      if (newIds.indexOf(id) < 0) {
-        var el = list.querySelector('[data-uid="'+id+'"]');
-        if (el) list.removeChild(el);
-      }
-    });
+    if (needRebuild) {
+      list.innerHTML = '';
 
-    /* Append newly unlocked items */
-    vis.forEach(function(u, i) {
-      if (list.querySelector('[data-uid="'+u.id+'"]')) return;
-      var cost = getUpgradeCost(u), can = state.squares >= cost;
-      var c = mk('div','tqu'+(can?' aff':' dim'));
-      c.setAttribute('data-uid', u.id);
-      c.appendChild(mk('div','tqu-n', u.name));
-      c.appendChild(mk('div','tqu-c', fmt(cost)+' sq'));
-      c.appendChild(mk('div','tqu-d', u.desc));
-      c.addEventListener('click', (function(uid){ return function(){ buyUpgrade(uid); }; })(u.id));
-      /* Insert at correct position relative to siblings */
-      var next = null;
-      for (var j = i+1; j < vis.length; j++) {
-        next = list.querySelector('[data-uid="'+vis[j].id+'"]');
-        if (next) break;
+      /* --- Available --- */
+      if (available.length) {
+        var ah = mk('div','tqu-sechd','Available');
+        list.appendChild(ah);
+        available.forEach(function(u) {
+          var cost = getUpgradeCost(u), can = state.squares >= cost;
+          var c = mk('div','tqu'+(can?' aff':' dim'));
+          c.setAttribute('data-uid', u.id);
+          c.appendChild(mk('div','tqu-n', u.name));
+          c.appendChild(mk('div','tqu-c', fmt(cost)+' sq'));
+          c.appendChild(mk('div','tqu-d', u.desc));
+          c.addEventListener('click', (function(uid){ return function(){ buyUpgrade(uid); }; })(u.id));
+          list.appendChild(c);
+        });
+      } else {
+        var ph = mk('div','tqu-empty','Keep producing squares to unlock upgrades.');
+        list.appendChild(ph);
       }
-      if (next) list.insertBefore(c, next); else list.appendChild(c);
-    });
 
-    /* Empty-state placeholder */
-    var ph = list.querySelector('[data-uid="_ph"]');
-    if (!vis.length && !ph) {
-      var p = mk('div',''); p.setAttribute('data-uid','_ph');
-      p.style.cssText = 'color:rgba(237,237,237,.28);font-size:11px;padding:8px 0';
-      p.textContent = 'Keep producing squares to unlock upgrades.';
-      list.appendChild(p);
-    } else if (vis.length && ph) { list.removeChild(ph); }
+      /* --- Locked --- */
+      if (locked.length) {
+        var lh = mk('div','tqu-sechd tqu-sechd-locked','Locked');
+        list.appendChild(lh);
+        locked.forEach(function(u) {
+          var hint = getUpgradeHint(u);
+          var c = mk('div','tqu tqu-locked');
+          c.setAttribute('data-uid-locked', u.id);
+          c.appendChild(mk('div','tqu-n', '🔒 ' + u.name));
+          c.appendChild(mk('div','tqu-d', u.desc));
+          c.appendChild(mk('div','tqu-hint', hint));
+          list.appendChild(c);
+        });
+      }
+
+      /* --- Owned --- */
+      if (owned.length) {
+        var oh = mk('div','tqu-sechd tqu-sechd-owned','Owned');
+        list.appendChild(oh);
+        owned.forEach(function(u) {
+          var c = mk('div','tqu tqu-owned');
+          c.appendChild(mk('div','tqu-n', '✓ ' + u.name));
+          c.appendChild(mk('div','tqu-d', u.desc));
+          list.appendChild(c);
+        });
+      }
+    } else {
+      /* Fast path — just refresh afford classes on available items */
+      available.forEach(function(u) {
+        var cost = getUpgradeCost(u), can = state.squares >= cost;
+        var c = list.querySelector('[data-uid="'+u.id+'"]');
+        if (!c) return;
+        c.classList.toggle('aff', can);
+        c.classList.toggle('dim', !can);
+        var cc = c.querySelector('.tqu-c');
+        if (cc) cc.textContent = fmt(cost)+' sq';
+      });
+    }
   });
+}
+
+function getUpgradeHint(u) {
+  if (u.req) {
+    var s = state;
+    /* Building-based */
+    if (u.type === 'building' && u.target) {
+      var b = BUILDINGS.filter(function(x){return x.id===u.target;})[0];
+      if (b) {
+        var owned10 = u.id.endsWith('_u1') ? 10 : u.id.endsWith('_u2') ? 25 : 50;
+        var have = s.buildings[u.target] || 0;
+        return 'Own ' + owned10 + ' ' + b.name + 's  (' + have + '/' + owned10 + ')';
+      }
+    }
+    /* Click-based */
+    if (u.clickBonus || u.clickPct) {
+      var thresholds = {click1:10,click2:100,click3:500,click4:2000,click5:10000,click6:100000};
+      var t = thresholds[u.id];
+      if (t) return 'Click ' + fmt(t) + ' times  (' + fmt(s.totalClicks) + '/' + fmt(t) + ')';
+    }
+    /* Square-based */
+    if (u.type === 'global') {
+      var sqthresh = {global1:500,global2:5000,global3:50000,global4:500000,global5:5000000};
+      var st = sqthresh[u.id];
+      if (st) return 'Produce ' + fmt(st) + ' total squares  (' + fmt(s.totalSquares) + '/' + fmt(st) + ')';
+    }
+    /* Other */
+    if (u.id === 'crit1') return 'Click ' + fmt(1000) + ' times  (' + fmt(s.totalClicks) + '/1K)';
+    if (u.id === 'crit2') return 'Click ' + fmt(10000) + ' times  (' + fmt(s.totalClicks) + '/10K)';
+    if (u.id === 'golden1') return 'Produce ' + fmt(10000) + ' total squares';
+    if (u.id === 'offline1') return 'Own 5 buildings  (' + getBuildingCount(s) + '/5)';
+    if (u.id === 'offline2') return 'Own 20 buildings  (' + getBuildingCount(s) + '/20)';
+  }
+  return 'Keep playing to unlock';
 }
 
 /* ── Achievement list ───────────────────────────── */
@@ -771,6 +849,32 @@ function syncAchList() {
     var s = mk('span','tqa', a.name); s.title = a.desc;
     achListEl.appendChild(s);
   });
+}
+
+/* ── Achievement modal ──────────────────────────── */
+function showAchModal() {
+  var existing = document.getElementById('tq-achmodal');
+  if (existing) { existing.classList.remove('h'); return; }
+  var modal = mk('div'); modal.id = 'tq-achmodal';
+  var box   = mk('div'); box.id   = 'tq-achbox';
+  var earned = Object.keys(state.achievements || {}).length;
+  var h2 = mk('h2','', '🏆 Achievements  ' + earned + ' / ' + ACH.length);
+  box.appendChild(h2);
+  ACH.forEach(function(a) {
+    var isEarned = !!(state.achievements && state.achievements[a.id]);
+    var row = mk('div','tqam-row '+(isEarned?'earned':'locked'));
+    var ic  = mk('div','tqam-ic', isEarned ? '🏆' : '🔒');
+    var info = mk('div');
+    info.appendChild(mk('div','tqam-name', a.name));
+    info.appendChild(mk('div','tqam-desc', a.desc));
+    row.appendChild(ic); row.appendChild(info);
+    box.appendChild(row);
+  });
+  var close = mk('button','','Close'); close.id = 'tq-achclose';
+  close.addEventListener('click', function(){ modal.classList.add('h'); });
+  box.appendChild(close);
+  modal.appendChild(box);
+  overlay.appendChild(modal);
 }
 
 /* ── Arch list ──────────────────────────────────── */
@@ -1088,6 +1192,7 @@ function doRecompile() {
     goldenActive = false; techDebtActive = false; hackathonActive = false;
     techDebtClicks = 0; comboCount = 0; comboActive = false;
     upgradeVisKey = null; achCount = -1;
+    ['tq-ulist','tq-mulist'].forEach(function(lid){ var l = document.getElementById(lid); if(l) l.innerHTML=''; });
     notify('⟳ Recompiled!', 'Gained ' + cpg + ' CP. Run #' + state.recompiles + ' begins.');
     checkAch(); syncArchList(); updateUI();
     saveLocal(); saveFirebase();
