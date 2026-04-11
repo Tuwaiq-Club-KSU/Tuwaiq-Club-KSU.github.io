@@ -2,7 +2,7 @@ window.TuwaiqGolf = (function () {
   'use strict';
 
   /* ── Path constants ─────────────────────────────────── */
-  var MEME_PATH = '../Useful Assets/memes/';
+  var MEME_PATH = './Useful Assets/memes/';
 
   /* ── Sprite image handles ───────────────────────────── */
   var imgBall   = null;
