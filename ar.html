@@ -641,5 +641,32 @@
     })();
   </script>
 
+  <script>
+    (function () {
+      var loaded = false;
+      function launch() {
+        if (loaded) { window.TuwaiqGolf.init(null); return; }
+        var s = document.createElement('script');
+        s.src = 'golf.js';
+        s.onload = function () { loaded = true; window.TuwaiqGolf.init(null); };
+        document.head.appendChild(s);
+      }
+      function onKey(e) {
+        if (e.key !== 'g' && e.key !== 'G') return;
+        if (window.scrollY > 120) return;
+        e.preventDefault();
+        window.removeEventListener('keydown', onKey);
+        launch();
+      }
+      window.addEventListener('keydown', onKey);
+      // Click the footer club logo to launch
+      var footerLogo = document.querySelector('.footer-logo-text');
+      if (footerLogo) {
+        footerLogo.style.cursor = 'pointer';
+        footerLogo.addEventListener('click', function () { launch(); });
+      }
+    })();
+  </script>
+
 </body>
 </html>
