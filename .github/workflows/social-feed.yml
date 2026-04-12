@@ -73,16 +73,16 @@ jobs:
                   if text and link:
                       posts.append({'text': text, 'link': link, 'date': date})
 
-          with open('SoonPage/social-feed.json', 'w', encoding='utf-8') as f:
+          with open('./social-feed.json', 'w', encoding='utf-8') as f:
               json.dump(posts, f, ensure_ascii=False, indent=2)
 
-          print(f'Written {len(posts)} posts to SoonPage/social-feed.json')
+          print(f'Written {len(posts)} posts to ./social-feed.json')
           PYEOF
 
       - name: Commit & push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add SoonPage/social-feed.json
+          git add ./social-feed.json
           git diff --cached --quiet || git commit -m "chore: update social feed [skip ci]"
           git push
