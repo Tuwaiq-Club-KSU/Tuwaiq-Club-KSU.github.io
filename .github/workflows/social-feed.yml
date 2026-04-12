@@ -64,6 +64,8 @@ jobs:
                   desc  = get_tag(block, 'description')
                   title = get_tag(block, 'title')
                   raw   = desc if desc else title
+                  img_m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', raw)
+                  media = img_m.group(1) if img_m else ''
                   text  = html.unescape(re.sub(r'<[^>]+>', '', raw)).strip()
                   link  = get_tag(block, 'link')
                   # Rewrite any nitter domain to x.com
@@ -71,18 +73,19 @@ jobs:
                   link  = re.sub(r'https?://xcancel\.com/','https://x.com/', link)
                   date  = get_tag(block, 'pubDate')
                   if text and link:
-                      posts.append({'text': text, 'link': link, 'date': date})
+                      posts.append({'text': text, 'link': link, 'date': date, 'media': media})
 
-          with open('./social-feed.json', 'w', encoding='utf-8') as f:
+          import os
+          with open('social-feed.json', 'w', encoding='utf-8') as f:
               json.dump(posts, f, ensure_ascii=False, indent=2)
 
-          print(f'Written {len(posts)} posts to ./social-feed.json')
+          print(f'Written {len(posts)} posts to social-feed.json')
           PYEOF
 
       - name: Commit & push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./social-feed.json
+          git add social-feed.json
           git diff --cached --quiet || git commit -m "chore: update social feed [skip ci]"
           git push
