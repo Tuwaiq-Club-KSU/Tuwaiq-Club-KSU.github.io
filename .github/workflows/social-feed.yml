@@ -1,0 +1,78 @@
+name: Update Social Feed
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'   # runs every 3 hours
+  workflow_dispatch:          # lets you trigger it manually from GitHub Actions tab
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch & parse X feed
+        run: |
+          python3 - <<'EOF'
+          import urllib.request, xml.etree.ElementTree as ET, json, re, html
+
+          INSTANCES = [
+              'https://nitter.net/Tuwaiq_KSU/rss',
+              'https://nitter.privacydev.net/Tuwaiq_KSU/rss',
+              'https://nitter.poast.org/Tuwaiq_KSU/rss',
+          ]
+
+          HEADERS = {
+              'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36',
+              'Accept': 'application/rss+xml, text/xml, */*',
+          }
+
+          xml_text = None
+          for url in INSTANCES:
+              try:
+                  req = urllib.request.Request(url, headers=HEADERS)
+                  with urllib.request.urlopen(req, timeout=10) as r:
+                      text = r.read().decode('utf-8')
+                      if '<item>' in text and 'not yet whitelisted' not in text and '1971' not in text:
+                          xml_text = text
+                          print(f'Got feed from {url}')
+                          break
+              except Exception as e:
+                  print(f'Failed {url}: {e}')
+
+          posts = []
+          if xml_text:
+              # Strip namespace prefixes so ElementTree can parse cleanly
+              xml_text = re.sub(r'<dc:[^>]+>.*?</dc:[^>]+>', '', xml_text, flags=re.DOTALL)
+              xml_text = re.sub(r'xmlns[^"]*"[^"]*"', '', xml_text)
+              try:
+                  root = ET.fromstring(xml_text)
+                  for item in root.findall('.//item')[:3]:
+                      def tag(t):
+                          el = item.find(t)
+                          return el.text.strip() if el is not None and el.text else ''
+                      text = html.unescape(re.sub(r'<[^>]+>', '', tag('description') or tag('title')))
+                      link = tag('link').replace('nitter.net', 'x.com') \
+                                        .replace('nitter.privacydev.net', 'x.com') \
+                                        .replace('nitter.poast.org', 'x.com')
+                      posts.append({'text': text.strip(), 'link': link, 'date': tag('pubDate')})
+              except Exception as e:
+                  print(f'Parse error: {e}')
+
+          with open('SoonPage/social-feed.json', 'w', encoding='utf-8') as f:
+              json.dump(posts, f, ensure_ascii=False, indent=2)
+
+          print(f'Written {len(posts)} posts to SoonPage/social-feed.json')
+          EOF
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add SoonPage/social-feed.json
+          git diff --cached --quiet || git commit -m "chore: update social feed [skip ci]"
+          git push
