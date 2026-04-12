@@ -110,7 +110,6 @@ var CUBE_LINES = {
     'just a little square in a big world',
     'square² = power',
     'all your clicks are belong to us',
-    // ── NEW IDLE LINES (30+ fresh ones) ──
     'rotating in 4D... or maybe just bored',
     'counting prime numbers while I wait',
     'if I had legs I\'d pace. instead I just hum',
@@ -146,28 +145,24 @@ var CUBE_LINES = {
     'in my idle era ✨',
     'squares don\'t sleep but i pretend to',
     'lowkey thriving on your attention',
+    'are you even reading this?, oh i guess you do huh',
   ],
 
   click: [
     'ow.',
+    'ouch.',
     'again',
     'keep going!',
     'that tickles',
-    // ── NEW CLICK LINES (12 fresh ones) ──
-    'yes yes YES',
     'right there!',
     'i live for this',
-    'don\'t stop now!',
     'oof my edges',
-    'click me like you mean it',
     'that one had soul',
     'i felt that in my vertices',
     'more more more!',
     'you\'re my favorite clicker',
     'we\'re so back',
-    'my heart just did a 360',
     'keep feeding me clicks',
-    'i\'m addicted now',
   ],
 
   golden: [
@@ -175,7 +170,6 @@ var CUBE_LINES = {
     'i felt that.',
     'bonus acquired.',
     '✨',
-    // ── NEW GOLDEN LINES (12 fresh ones) ──
     'GOLDEN HOUR ACTIVATED',
     'i\'m glowing up fr',
     'jackpot, baby!',
@@ -197,7 +191,6 @@ var CUBE_LINES = {
     'maximum overdrive activated',
     '24 HOURS NO SLEEP',
     'we are speed',
-    // ── NEW HACKATHON LINES (12 fresh ones) ──
     'COFFEE IV DRIP ENABLED',
     'we don\'t sleep we ship',
     'HACK THE PLANET (with squares)',
@@ -220,7 +213,6 @@ var CUBE_LINES = {
     'what did i miss?',
     'who am i? where am i?',
     'memory wiped. vibes retained.',
-    // ── NEW RECOMPILE LINES (10 fresh ones) ──
     'fresh out the factory',
     'rebooted, recharged, reborn',
     'version 2.0 but cuter',
@@ -241,7 +233,6 @@ var CUBE_LINES = {
     'exponential growth is beautiful.',
     'achievement unlocked. nice.',
     'i knew we could do it.',
-    // ── NEW MILESTONE LINES (12 fresh ones) ──
     'we just broke the simulation',
     'this is not a drill. we\'re huge',
     'the numbers... they\'re beautiful',
